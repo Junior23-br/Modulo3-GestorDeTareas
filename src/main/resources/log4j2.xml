@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <!-- Carpeta donde se guardarán los logs -->
+        <Property name="LOG_PATH">logs</Property>
+
+        <!-- Nombre base del archivo -->
+        <Property name="LOG_FILE">task-manager</Property>
+
+        <!-- Patrón de salida -->
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Appender para consola -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- Appender para archivo rotativo -->
+        <RollingFile name="RollingFileAppender"
+                     fileName="${LOG_PATH}/${LOG_FILE}.log"
+                     filePattern="${LOG_PATH}/archive/${LOG_FILE}-%d{yyyy-MM-dd}-%i.log.gz">
+
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+
+            <Policies>
+                <!-- Rota cada 24 horas -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+
+                <!-- O rota si supera 5 MB -->
+                <SizeBasedTriggeringPolicy size="5 MB"/>
+            </Policies>
+
+            <!-- Conserva hasta 10 archivos  -->
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Logger específico paquete -->
+        <Logger name="org.example" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Logger>
+
+        <!-- Logger raíz -->
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Root>
+
+    </Loggers>
+</Configuration>
